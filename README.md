@@ -24,6 +24,15 @@ weather:
 - `region` id或经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
 - `default`: 如果你是`普通用户`请填3，`认证开发者`可选7，意为查询未来3天还是7天的数据
 
+## 示例
+
+- 3天：
+
+![3 days](https://github.com/cheny95/qweather/blob/main/3d.png?raw=true)
+
+- 7天：
+
+![7 days](https://github.com/cheny95/qweather/blob/main/7d.png?raw=true)
 #
 
 ## 鸣谢：
@@ -35,4 +44,4 @@ weather:
 
 - 微信群：
   
-![xiaomi miot weixin group](https://user-images.githubusercontent.com/4549099/152003439-d537fda6-15dd-43df-84cb-2c64c693c013.png))
+![xiaomi miot weixin group](https://user-images.githubusercontent.com/4549099/152003439-d537fda6-15dd-43df-84cb-2c64c693c013.png)
