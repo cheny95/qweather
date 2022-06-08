@@ -1,0 +1,6 @@
+{
+    "name": "和风天气",
+    "domains": ["weather"],
+    "render_readme": true,
+    "country": ["CN"]
+  }
