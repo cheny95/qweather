@@ -3,7 +3,8 @@
 ## 使用方法：
 
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
-- 在`/config/configuration.yaml`添加以下内容
+- 然后重启Home Assistant服务。
+- 启动完成后，在`/config/configuration.yaml`添加以下内容
 
 ```yaml
 weather:
@@ -13,7 +14,8 @@ weather:
     region: 101010100
     default: 3
 ```
-- 重启homeassistant
+- 再次重启 Home Assistant
+- 配置 - 设备与服务 - 实体注册表 搜索你刚才填写配置文件里的名字即可
   
 
 
