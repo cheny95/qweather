@@ -1,4 +1,4 @@
-# 和风天气 Home Assistant插件
+# 和风天气 Home Assistant 插件
 
 ## 使用方法：
 
