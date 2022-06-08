@@ -9,9 +9,9 @@
 weather:
   - platform: qweather
     name: hefeng
-    api_key: key
+    api_key: 123456
     region: 101010100
-    default: 如果账号是认证开发者可以填7 否者填3
+    default: 3
 ```
 - 重启homeassistant
   
