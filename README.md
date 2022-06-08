@@ -42,6 +42,6 @@ weather:
 ## 交流
 - QQ群：198841186
 
-- 微信群：
+- 微信群：(添加该机器人，发送“进群”会自动发送邀请链接）
   
-![xiaomi miot weixin group](https://user-images.githubusercontent.com/4549099/152003439-d537fda6-15dd-43df-84cb-2c64c693c013.png)
+![xiaomi miot weixin group](https://user-images.githubusercontent.com/4549099/161735971-0540ce1c-eb49-4aff-8cb3-3bdad15e22f7.png)
