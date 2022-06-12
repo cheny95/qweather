@@ -14,6 +14,8 @@ from homeassistant.components.weather import (
     ATTR_FORECAST_WIND_SPEED,
     ATTR_FORECAST_PRESSURE,
     ATTR_FORECAST_PRECIPITATION_PROBABILITY,
+    ATTR_WEATHER_HUMIDITY,
+    ATTR_CONDITION_CLOUDY
 )
 from homeassistant.const import (
     TEMP_CELSIUS,
@@ -44,11 +46,13 @@ class QWeather(WeatherEntity):
         self._current: dict = None
         self._daily_data: list[dict] = None
         self._indices_data: list[dict] = None
+        self._hourly_data: list[dict] = None
         self._air_data = None
         self.now_url = f"https://devapi.qweather.com/v7/weather/now?location={self.location}&key={self.api_key}"
         self.daily_url = f"https://devapi.qweather.com/v7/weather/{self.default}d?location={self.location}&key={self.api_key}"
         self.indices_url = f"https://devapi.qweather.com/v7/indices/1d?type=0&location={self.location}&key={self.api_key}"
         self.air_url = f"https://devapi.qweather.com/v7/air/now?location={self.location}&key={self.api_key}"
+        self.hourly_url = f"https://devapi.qweather.com/v7/weather/24h?location={self.location}&key={self.api_key}"
         self.update_time = None
 
     @property
@@ -69,16 +73,16 @@ class QWeather(WeatherEntity):
                 self._current = json_data["now"]
                 self.update_time = json_data["updateTime"]
             async with session.get(self.daily_url) as response:
-
                 self._daily_data = (await response.json() or {}).get("daily")
-                # json_data = await response.json()
-                # self._daily_data = json_data["daily"]
+               
             async with session.get(self.indices_url) as response:
                 self._indices_data = (await response.json() or {}).get("daily")
-                # self._indices_data = (await response.json())["daily"]
+               
             async with session.get(self.air_url) as response:
                 self._air_data = (await response.json() or {}).get("now")
-                # self._air_data = (await response.json())["now"]
+               
+            async with session.get(self.hourly_url) as response:
+                self._hourly_data = (await response.json() or {}).get("hourly")
 
     @property
     def cloud_percent(self):
@@ -145,7 +149,7 @@ class QWeather(WeatherEntity):
         """生活指数"""
         indices_str = ""
         for data in self._indices_data:
-            indices_str += f"{data['name']}: {data['level']}({data['category']}\n{data['text']}\n\n)"
+            indices_str += f"{data['name']}: {data['level']}\n({data['category']}\n{data['text']})\n\n"
         return indices_str
 
     @property
@@ -156,8 +160,27 @@ class QWeather(WeatherEntity):
     @property
     def aqi(self):
         """aqi"""
-
         return f"AQI: {self._air_data['aqi']} 等级: {self._air_data['level']} {self._air_data['category']} 主要污染物: {self._air_data['primary']}"
+    
+    @property
+    def aqi_num(self):
+        """aqi_num"""
+        return f"{self._air_data['aqi']}"
+
+    @property
+    def aqi_level(self):
+        """aqi等级1"""
+        return f"{self._air_data['level']}"
+    
+    @property
+    def aqi_category(self):
+        """aqi等级2"""
+        return f"{self._air_data['category']}"
+
+    @property
+    def aqi_primary(self):
+        """aqi主要污染物"""
+        return f"{self._air_data['primary']}"
 
     @property
     def pm25(self):
@@ -201,12 +224,17 @@ class QWeather(WeatherEntity):
         data["wind_sacle"] = self.wind_sacle
         data["suggestion"] = self.suggestion
         data["aqi"] = self.aqi
+        data["aqi_num"] = self.aqi_num
+        data["aqi_level"] = self.aqi_level
+        data["aqi_category"] = self.aqi_category
+        data["aqi_primary"] = self.aqi_primary
         data["pm25"] = self.pm25
         data["pm10"] = self.pm10
         data["o3"] = self.o3
         data["no2"] = self.no2
         data["so2"] = self.so2
         data["co"] = self.co
+        data["forecast_hourly"] = self.forecast_hourly
         return data
 
     @property
@@ -234,3 +262,30 @@ class QWeather(WeatherEntity):
             )
 
         return forecast_list
+
+    @property
+    def forecast_hourly(self):
+        """小时为单位的预报"""
+        forecast_hourly_list = []
+        for hourly in self._hourly_data:
+            forecast_hourly_list.append(
+                {
+                    'time': hourly['fxTime'][11:16],
+                    ATTR_CONDITION_CLOUDY: hourly["cloud"],
+                    ATTR_FORECAST_TEMP: float(hourly["temp"]),
+                    ATTR_FORECAST_CONDITION: CONDITION_MAP.get(
+                        hourly["icon"], EXCEPTIONAL
+                    ),
+                    "text": hourly["text"],
+                    ATTR_FORECAST_WIND_BEARING: float(hourly["wind360"]),
+                    ATTR_FORECAST_WIND_SPEED: float(hourly["windSpeed"]),
+                    ATTR_FORECAST_PRECIPITATION: float(hourly["precip"]),
+                    ATTR_WEATHER_HUMIDITY: float(hourly["humidity"]),
+                    ATTR_FORECAST_PRECIPITATION_PROBABILITY: int(
+                        hourly["pop"]
+                    ),  # 降雨率
+                    ATTR_FORECAST_PRESSURE: float(hourly["pressure"]),
+                }
+            )
+
+        return forecast_hourly_list

@@ -19,7 +19,7 @@ EXCEPTIONAL = "exceptional"  # 例外
 CLOUDY_NIGHT = "weather-night-partly-cloudy"  # 夜间多云
 POURING_RAINY = "weather-pouring"  # 倾盆大雨
 SNOWY_HEAVY = "weather-snowy-heavy"  # 大雪
-
+PARTY_CLOUDY_NIGHT = "partly-cloudy-night"  # 夜间多云
 
 CONDITION_MAP = {
     "100": SUNNY,  # 晴
@@ -31,7 +31,7 @@ CONDITION_MAP = {
     "150": CLEAR_NIGHT,  # 晴
     "151": CLOUDY_NIGHT,  # 多云
     "152": CLOUDY_NIGHT,  # 少云
-    "153": CLOUDY_NIGHT,  # 夜间多云
+    "153": PARTY_CLOUDY_NIGHT,  # 夜间多云
     "154": CLOUDY,  # 阴
     "300": RAINY,  # 阵雨
     "301": RAINY,  # 强阵雨
