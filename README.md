@@ -17,6 +17,13 @@ weather:
 - 再次重启 Home Assistant
 - 依次点击配置 - 设备与服务 - 实体注册表 搜索你刚才填写配置文件里的名字即可
   
+- 关于调用接口次数：
+  集成每次更新会调用4个接口（新版本新增一个小时级预报，可以预报24小时的天气），所以你的接口调用次数是每更新一次就是调用4次。
+  在老版本的时候，每次更新调用3个接口，我设置了 scan_interval: 600
+```yaml
+    scan_interval: 600  #默认是10秒还是30秒我记不清了
+```
+每小时调用次数是24次。这个可以根据你的需求自己调整。
 
 
 ## 参数释义：
@@ -35,6 +42,61 @@ weather:
 - 7天：
 
 ![7 days](https://github.com/cheny95/qweather/blob/main/7d.png?raw=true)
+
+- 每日预报： 开发者工具-状态-实体名称-属性
+  
+```yaml
+forecast:
+  - datetime: '2022-06-13'
+    temperature: 30
+    templow: 21
+    condition: partlycloudy
+    wind_bearing: 135
+    wind_speed: 3
+    precipitation: 0
+    humidity: 85
+    precipitation_probability: 85
+    pressure: 1000
+  - datetime: '2022-06-14'
+    temperature: 33
+    templow: 20
+    condition: partlycloudy
+    wind_bearing: 135
+    wind_speed: 16
+    precipitation: 0
+    humidity: 69
+    precipitation_probability: 69
+    pressure: 1002
+    ……
+```
+- 当天每小时预报： 开发者工具-状态-实体名称-属性
+  
+```yaml
+forecast_hourly:
+  - time: '01:00'
+    cloudy: '100'
+    temperature: 19
+    condition: weather-night-partly-cloudy
+    text: 多云
+    wind_bearing: 111
+    wind_speed: 11
+    precipitation: 0
+    humidity: 94
+    precipitation_probability: 7
+    pressure: 1003
+  - time: '02:00'
+    cloudy: '100'
+    temperature: 19
+    condition: weather-night-partly-cloudy
+    text: 多云
+    wind_bearing: 110
+    wind_speed: 11
+    precipitation: 0
+    humidity: 96
+    precipitation_probability: 7
+    pressure: 1003
+    ……
+```
 #
 
 ## 鸣谢：
