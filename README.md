@@ -11,26 +11,26 @@ weather:
   - platform: qweather
     name: hefeng
     api_key: 123456
-    region: 101010100
+    location: 116.40,39.90 #注意，此处改为了经纬度
     default: 3
 ```
 - 再次重启 Home Assistant
 - 依次点击配置 - 设备与服务 - 实体注册表 搜索你刚才填写配置文件里的名字即可
   
 - 关于调用接口次数：
-  集成每次更新会调用4个接口（新版本新增一个小时级预报，可以预报24小时的天气），所以你的接口调用次数是每更新一次就是调用4次。
-  在老版本的时候，每次更新调用3个接口，我设置了 scan_interval: 600
+  集成每次更新会调用7个接口（新版本新增小时级预报，可以预报24小时的天气，新增格点天气，新增灾害预警），所以你的接口调用次数是每更新一次就是调用4次。
+  在老版本的时候，每次更新调用4个接口，我设置了`scan_interval: 600`（直接在`default`参数换行后追加即可，注意缩进），每小时调用次数是24次。
+  现在增加了一些功能，等于查询一次等于调用7次接口，这个可以根据你的需求自己调整更新时间，节省请求次数。
 ```yaml
     scan_interval: 600  #默认是10秒还是30秒我记不清了
 ```
-每小时调用次数是24次。这个可以根据你的需求自己调整。
 
 
 ## 参数释义：
 
 - `name` 实体名字
 - `api_key` 和风申请的api key，申请地址：[https://dev.qweather.com/](https://dev.qweather.com/)
-- `region` id或经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
+- `region` 经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
 - `default`: 如果你是`普通用户`请填3，`认证开发者`可选7，意为查询未来3天还是7天的数据
 
 ## 示例
@@ -97,7 +97,68 @@ forecast_hourly:
     pressure: 1003
     ……
 ```
+- 未来2小时内分钟级预报： 开发者工具-状态-实体名称-属性
+
+```yaml
+forecast_minutely:
+  - time: '14:10'
+    type: rain
+    precipitation: 0
+  - time: '14:15'
+    type: rain
+    precipitation: 0
+  - time: '14:20'
+    type: rain
+    precipitation: 0
+  - time: '14:25'
+    type: rain
+    precipitation: 0
+  - time: '14:30'
+    type: rain
+    precipitation: 0
+    ……
+minutely_summary: 未来两小时无降水 #预报描述
+```
+
+- 灾害预警
+```yaml
+# 无预警
+weather_warning: 
+  - text: 当前无灾害预警
+```
+```yaml
+# 有预警
+weather_warning:
+  - time: 2021-10-09T15:46+08:00
+    sender: 北京市气象局
+    title: 北京市气象台2021年10月09日15时40分发布大风蓝色预警信号
+    text: 市气象台2021年10月9日15时40分发布大风蓝色预警信号：预计，9日22时至10日19时，本市大部分地区有4级左右偏北风，阵风6、7级，山区阵风可达8级左右，请注意防范。
+    severity: Minor
+    severityColor: Blue
+    typeName: 大风
+```
 #
+## 版本记录：
+
+- v0.0.4
+  - 新增未来2小时分钟级预报。（forecast_minutely, minutely_summary）
+  - 新增灾害预警。（weather_warning）
+  - 因支持格点天气分钟级别预报，location参数中ID不在使用，使用经纬度作为参数，格式、获取方式一样参考上方。
+
+
+- v0.0.3
+  - 新增当天24小时的小时级预报
+  - AQI拆分，便于template调用
+  - 生活指数无法拆分，因为是循环出来的信息。
+  - 增加当天的小时级预报。（是否需要认证开发者未测试，默认都是认证开发者。）
+  - 尝试解决“weather-night-partly-cloudy”，但由于HA官方未适配该字典，暂时无法适配。
+
+
+- v0.0.2
+  - skip this version
+
+
+- v0.0.1 提交集成
 
 ## 鸣谢：
 - ### 感谢 [hass-xiaomi-miot](https://github.com/al-one/hass-xiaomi-miot) 作者 [@al-one](https://github.com/al-one) 的帮助。

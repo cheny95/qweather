@@ -336,7 +336,7 @@ class QWeather(WeatherEntity):
                         "sender": warningItem["sender"],
                         "title": warningItem["title"],
                         "text": warningItem["text"],
-                        "level": warningItem["severity"],
+                        "severity": warningItem["severity"],
                         "severityColor": warningItem["severityColor"],
                         "typeName": warningItem["typeName"],
                         ATTR_FORECAST_PRECIPITATION: float(warningItem["precip"]),
