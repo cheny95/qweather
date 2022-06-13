@@ -144,6 +144,7 @@ weather_warning:
   - 新增未来2小时分钟级预报。（forecast_minutely, minutely_summary）
   - 新增灾害预警。（weather_warning）
   - 因支持格点天气分钟级别预报，location参数中ID不在使用，使用经纬度作为参数，格式、获取方式一样参考上方。
+  - 注：以上2个接口是否需要认证开发者未测试，因为我的账号是认证开发者，默认都是认证开发者。
 
 
 - v0.0.3
@@ -159,6 +160,9 @@ weather_warning:
 
 
 - v0.0.1 提交集成
+  - 使用和风天气的认证开发者账号，每天16700次调用，非认证的1000次。但是功能上可能会受限。该集成默认用户都是认证开发者，可以调用7天预报之类的接口。
+
+
 
 ## 鸣谢：
 - ### 感谢 [hass-xiaomi-miot](https://github.com/al-one/hass-xiaomi-miot) 作者 [@al-one](https://github.com/al-one) 的帮助。
