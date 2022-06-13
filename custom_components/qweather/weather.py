@@ -20,9 +20,9 @@ from homeassistant.components.weather import (
 from homeassistant.const import (
     TEMP_CELSIUS,
     CONF_API_KEY,
-    CONF_REGION,
+    CONF_LOCATION,
     CONF_NAME,
-    CONF_DEFAULT,
+    CONF_DEFAULT
 )
 
 from .condition import CONDITION_MAP, EXCEPTIONAL
@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     _LOGGER.info("正在设置和风天气…")
     weather_entity = QWeather(
-        config[CONF_API_KEY], config[CONF_REGION], config[CONF_NAME], config[CONF_DEFAULT],
+        config[CONF_API_KEY], config[CONF_LOCATION], config[CONF_NAME], config[CONF_DEFAULT]
     )
     async_add_entities([weather_entity], True)
 
@@ -41,19 +41,25 @@ class QWeather(WeatherEntity):
         super().__init__()
         self.api_key = api_key
         self.location = location
-        self.default = default or 3
+        self.default = default
         self._name = name
         self._current: dict = None
         self._daily_data: list[dict] = None
         self._indices_data: list[dict] = None
         self._hourly_data: list[dict] = None
+        self._minutely_data: list[dict] = None
+        self._warning_data: list[dict] = None
         self._air_data = None
         self.now_url = f"https://devapi.qweather.com/v7/weather/now?location={self.location}&key={self.api_key}"
         self.daily_url = f"https://devapi.qweather.com/v7/weather/{self.default}d?location={self.location}&key={self.api_key}"
         self.indices_url = f"https://devapi.qweather.com/v7/indices/1d?type=0&location={self.location}&key={self.api_key}"
         self.air_url = f"https://devapi.qweather.com/v7/air/now?location={self.location}&key={self.api_key}"
         self.hourly_url = f"https://devapi.qweather.com/v7/weather/24h?location={self.location}&key={self.api_key}"
+        self.minutely_url = f"https://devapi.qweather.com/v7/minutely/5m?location={self.location}&key={self.api_key}"
+        self.warning_url = f"https://devapi.qweather.com/v7/warning/now?location={self.location}&key={self.api_key}"
         self.update_time = None
+        self.minutely_summary = None
+
 
     @property
     def name(self):
@@ -67,22 +73,32 @@ class QWeather(WeatherEntity):
 
     async def async_update(self):
         """获取天气数据"""
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=30)  # 将超时时间设置为30秒
+        connector = aiohttp.TCPConnector(limit=50)  # 将并发数量降低
+        async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
             async with session.get(self.now_url) as response:
                 json_data = await response.json()
                 self._current = json_data["now"]
                 self.update_time = json_data["updateTime"]
             async with session.get(self.daily_url) as response:
                 self._daily_data = (await response.json() or {}).get("daily")
-               
+
             async with session.get(self.indices_url) as response:
                 self._indices_data = (await response.json() or {}).get("daily")
-               
+
             async with session.get(self.air_url) as response:
                 self._air_data = (await response.json() or {}).get("now")
-               
+
             async with session.get(self.hourly_url) as response:
                 self._hourly_data = (await response.json() or {}).get("hourly")
+
+            async with session.get(self.minutely_url) as response:
+                minutely_data = await response.json()
+                self.minutely_summary =(await response.json() or None).get("summary")
+                self._minutely_data = (await response.json() or {}).get("minutely")
+
+            async with session.get(self.warning_url) as response:
+                self._warning_data = (await response.json() or {}).get("warning")
 
     @property
     def cloud_percent(self):
@@ -161,7 +177,7 @@ class QWeather(WeatherEntity):
     def aqi(self):
         """aqi"""
         return f"AQI: {self._air_data['aqi']} 等级: {self._air_data['level']} {self._air_data['category']} 主要污染物: {self._air_data['primary']}"
-    
+
     @property
     def aqi_num(self):
         """aqi_num"""
@@ -171,7 +187,7 @@ class QWeather(WeatherEntity):
     def aqi_level(self):
         """aqi等级1"""
         return f"{self._air_data['level']}"
-    
+
     @property
     def aqi_category(self):
         """aqi等级2"""
@@ -235,6 +251,9 @@ class QWeather(WeatherEntity):
         data["so2"] = self.so2
         data["co"] = self.co
         data["forecast_hourly"] = self.forecast_hourly
+        data["forecast_minutely"] = self.forecast_minutely
+        data["minutely_summary"] = self.minutely_summary
+        data["weather_warning"] = self.weather_warning
         return data
 
     @property
@@ -270,7 +289,7 @@ class QWeather(WeatherEntity):
         for hourly in self._hourly_data:
             forecast_hourly_list.append(
                 {
-                    'time': hourly['fxTime'][11:16],
+                    "time": hourly["fxTime"][11:16],
                     ATTR_CONDITION_CLOUDY: hourly["cloud"],
                     ATTR_FORECAST_TEMP: float(hourly["temp"]),
                     ATTR_FORECAST_CONDITION: CONDITION_MAP.get(
@@ -289,3 +308,46 @@ class QWeather(WeatherEntity):
             )
 
         return forecast_hourly_list
+
+    @property
+    def forecast_minutely(self):
+        """格点天气预报"""
+        forecast_minutely_list = []
+        for minutely_data in self._minutely_data:
+            forecast_minutely_list.append(
+                {
+                    "time": minutely_data['fxTime'][11:16],
+                    "type": minutely_data["type"],
+                    ATTR_FORECAST_PRECIPITATION: float(minutely_data["precip"]),
+                }
+            )
+
+        return forecast_minutely_list
+
+    @property
+    def weather_warning(self):
+        """灾害预警"""
+        weather_warning_list = []
+        if len(self._warning_data):
+            for warningItem in self._warning_data:
+                weather_warning_list.append(
+                    {
+                        "time": warningItem["pubTime"][11:16],
+                        "sender": warningItem["sender"],
+                        "title": warningItem["title"],
+                        "text": warningItem["text"],
+                        "level": warningItem["severity"],
+                        "severityColor": warningItem["severityColor"],
+                        "typeName": warningItem["typeName"],
+                        ATTR_FORECAST_PRECIPITATION: float(warningItem["precip"]),
+                    }
+                )
+
+        else:
+            weather_warning_list.append(
+                {
+                   'text': '当前无灾害预警'
+                }
+            )
+
+        return weather_warning_list
