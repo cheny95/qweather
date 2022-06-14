@@ -332,14 +332,16 @@ class QWeather(WeatherEntity):
             for warningItem in self._warning_data:
                 weather_warning_list.append(
                     {
-                        "time": warningItem["pubTime"][11:16],
+                        "pubTime": warningItem["pubTime"],
+                        "startTime": warningItem["startTime"],
+                        "endTime": warningItem["endTime"],
                         "sender": warningItem["sender"],
                         "title": warningItem["title"],
                         "text": warningItem["text"],
                         "severity": warningItem["severity"],
                         "severityColor": warningItem["severityColor"],
+                        "level": warningItem["level"],
                         "typeName": warningItem["typeName"],
-                        ATTR_FORECAST_PRECIPITATION: float(warningItem["precip"]),
                     }
                 )
 
