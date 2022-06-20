@@ -12,7 +12,7 @@ weather:
     name: hefeng
     api_key: 123456
     location: 116.40,39.90 #注意，此处改为了经纬度
-    default: 3
+    default: 7
 ```
 - 再次重启 Home Assistant
 - 依次点击配置 - 设备与服务 - 实体注册表 搜索你刚才填写配置文件里的名字即可
@@ -31,7 +31,7 @@ weather:
 - `name` 实体名字
 - `api_key` 和风申请的api key，申请地址：[https://dev.qweather.com/](https://dev.qweather.com/)
 - `location` 经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
-- `default`: 如果你是`普通用户`请填3，`认证开发者`可选7，意为查询未来3天还是7天的数据
+- `default`: 需要`认证开发者`，意为查询未来7天的数据（取消了非开发者的支持，因为有一些格点天气之类的必须需要开发者）
 
 ## 示例
 
