@@ -5,6 +5,7 @@
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
 - 然后重启Home Assistant服务。
 - 启动完成后，在`/config/configuration.yaml`添加以下内容
+- **注意：后续版本不支持普通用户，仅支持开发者用户**
 
 ```yaml
 weather:
@@ -31,7 +32,7 @@ weather:
 - `name` 实体名字
 - `api_key` 和风申请的api key，申请地址：[https://dev.qweather.com/](https://dev.qweather.com/)
 - `location` 经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
-- `default`: 需要`认证开发者`，意为查询未来7天的数据（取消了非开发者的支持，因为有一些格点天气之类的必须需要开发者）
+- `default`: 需要$\color{red}{认证开发者}$，意为查询未来7天的数据（$\color{red}{取消了非开发者的支持，因为有一些格点天气之类的必须需要开发者}$）
 
 ## 示例
 
