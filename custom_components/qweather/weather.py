@@ -73,8 +73,8 @@ class QWeather(WeatherEntity):
 
     async def async_update(self):
         """获取天气数据"""
-        timeout = aiohttp.ClientTimeout(total=30)  # 将超时时间设置为30秒
-        connector = aiohttp.TCPConnector(limit=50)  # 将并发数量降低
+        timeout = aiohttp.ClientTimeout(total=300)  # 将超时时间设置为300秒
+        connector = aiohttp.TCPConnector(limit=80, force_close=True)  # 将并发数量降低
         async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
             async with session.get(self.now_url) as response:
                 json_data = await response.json()
