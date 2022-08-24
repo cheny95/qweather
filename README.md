@@ -32,7 +32,7 @@ weather:
 - `name` 实体名字
 - `api_key` 和风申请的api key，申请地址：[https://dev.qweather.com/](https://dev.qweather.com/)，申请后，请认证为个人开发者，新建一个使用web sdk项目，获取key。
 - `location` 经纬度，请[参考和风官方的地址列表](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)，搜索你所在的地区
-- `default`: 需要$\color{red}{认证开发者}$，意为查询未来7天的数据（$\color{red}{取消了非开发者的支持，因为有一些格点天气之类的必须需要开发者}$）
+- `default`: 需要`认证开发者`，意为查询未来7天的数据。**取消了非开发者的支持，因为有一些格点天气之类的必须需要开发者**
 
 ## 示例
 
