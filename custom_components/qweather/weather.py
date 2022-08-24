@@ -69,7 +69,8 @@ class QWeather(WeatherEntity):
     @property
     def condition(self):
         """Return the current condition."""
-        return CONDITION_MAP.get(self._current.get("icon"), EXCEPTIONAL)
+        return self._current["text"]
+        # return CONDITION_MAP.get(self._current.get("icon"), EXCEPTIONAL)
 
     async def async_update(self):
         """获取天气数据"""
@@ -232,6 +233,7 @@ class QWeather(WeatherEntity):
     def state_attributes(self):
         """注册自定义的属性"""
         data = super(QWeather, self).state_attributes
+        data["condition"] = self.condition
         data["condition_desc"] = self.condition_desc
         data["update_time"] = self.update_time
         data["cloud_percent"] = self.cloud_percent
@@ -269,6 +271,7 @@ class QWeather(WeatherEntity):
                     ATTR_FORECAST_CONDITION: CONDITION_MAP.get(
                         daily["iconDay"], EXCEPTIONAL
                     ),
+                    "text": daily["textNight"],
                     ATTR_FORECAST_WIND_BEARING: float(daily["wind360Day"]),
                     ATTR_FORECAST_WIND_SPEED: float(daily["windSpeedDay"]),
                     ATTR_FORECAST_PRECIPITATION: float(daily["precip"]),

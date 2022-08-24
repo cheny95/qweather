@@ -16,10 +16,10 @@ SUNNY = "sunny"  # 晴天
 WINDY = "windy"  # 有风
 WINDY_VARIANT = "windy-variant"  # 风变
 EXCEPTIONAL = "exceptional"  # 例外
-CLOUDY_NIGHT = "weather-night-partly-cloudy"  # 夜间多云
-POURING_RAINY = "weather-pouring"  # 倾盆大雨
-SNOWY_HEAVY = "weather-snowy-heavy"  # 大雪
-PARTY_CLOUDY_NIGHT = "partly-cloudy-night"  # 夜间多云
+CLOUDY_NIGHT = "cloudy-night-fill"  # 夜间多云
+POURING_RAINY = "extreme-rain"  # 倾盆大雨
+SNOWY_HEAVY = "heavy-snow"  # 大雪
+PARTY_CLOUDY_NIGHT = "partly-cloudy-night-fill"  # 夜间多云
 
 CONDITION_MAP = {
     "100": SUNNY,  # 晴
