@@ -2,5 +2,5 @@
     "domain": "qweather",
     "name": "qweather",
     "iot_class": "cloud_polling",
-    "version": "0.0.7"
+    "version": "0.0.8"
   }
