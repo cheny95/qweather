@@ -69,8 +69,8 @@ class QWeather(WeatherEntity):
     @property
     def condition(self):
         """Return the current condition."""
-        return self._current["text"]
-        # return CONDITION_MAP.get(self._current.get("icon"), EXCEPTIONAL)
+#         return self._current["text"]
+        return CONDITION_MAP.get(self._current.get("icon"), EXCEPTIONAL)
 
     async def async_update(self):
         """获取天气数据"""
