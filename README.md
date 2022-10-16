@@ -1,5 +1,7 @@
 # 和风天气 Home Assistant 插件
 
+![yaofan](https://user-images.githubusercontent.com/6293952/196037499-17ef6aec-9fe4-4fc2-a4ac-811a12bfb380.jpg)
+
 ## 使用方法：
 
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
