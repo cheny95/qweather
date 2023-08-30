@@ -6,19 +6,22 @@ import aiohttp
 from homeassistant.components.weather import (
     WeatherEntity,
     ATTR_FORECAST_CONDITION,
-    ATTR_FORECAST_PRECIPITATION,
-    ATTR_FORECAST_TEMP,
-    ATTR_FORECAST_TEMP_LOW,
+    ATTR_FORECAST_NATIVE_PRECIPITATION,
+    ATTR_FORECAST_NATIVE_TEMP,
+    ATTR_FORECAST_NATIVE_TEMP_LOW,
     ATTR_FORECAST_TIME,
     ATTR_FORECAST_WIND_BEARING,
-    ATTR_FORECAST_WIND_SPEED,
+    ATTR_FORECAST_NATIVE_WIND_SPEED,
     ATTR_FORECAST_PRESSURE,
     ATTR_FORECAST_PRECIPITATION_PROBABILITY,
     ATTR_WEATHER_HUMIDITY,
     ATTR_CONDITION_CLOUDY
 )
 from homeassistant.const import (
-    TEMP_CELSIUS,
+    UnitOfLength,
+    UnitOfPressure,
+    UnitOfSpeed,
+    UnitOfTemperature,
     CONF_API_KEY,
     CONF_LOCATION,
     CONF_NAME,
@@ -37,6 +40,12 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     async_add_entities([weather_entity], True)
 
 class QWeather(WeatherEntity):
+
+    _attr_native_pressure_unit = UnitOfPressure.HPA
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
+    _attr_native_precipitation_unit = UnitOfLength.MILLIMETERS
+
     def __init__(self, api_key: str, location: str, name: str, default) -> None:
         super().__init__()
         self.api_key = api_key
@@ -112,7 +121,7 @@ class QWeather(WeatherEntity):
         return self._current["text"]
 
     @property
-    def temperature(self):
+    def native_temperature(self):
         """温度"""
         return float(self._current["temp"])
 
@@ -122,12 +131,7 @@ class QWeather(WeatherEntity):
         return float(self._current["feelsLike"])
 
     @property
-    def temperature_unit(self):
-        """温度单位"""
-        return TEMP_CELSIUS
-
-    @property
-    def pressure(self):
+    def native_pressure(self):
         """大气压强"""
         return float(self._current["pressure"])
 
@@ -137,7 +141,7 @@ class QWeather(WeatherEntity):
         return float(self._current["humidity"])
 
     @property
-    def wind_speed(self):
+    def native_wind_speed(self):
         """风速"""
         return float(self._current["windSpeed"])
 
@@ -157,7 +161,7 @@ class QWeather(WeatherEntity):
         return float(self._current["windScale"])
 
     @property
-    def visibility(self):
+    def native_visibility(self):
         """能见度"""
         return self._current["vis"]
 
@@ -266,15 +270,15 @@ class QWeather(WeatherEntity):
             forecast_list.append(
                 {
                     ATTR_FORECAST_TIME: daily["fxDate"],
-                    ATTR_FORECAST_TEMP: float(daily["tempMax"]),
-                    ATTR_FORECAST_TEMP_LOW: float(daily["tempMin"]),
+                    ATTR_FORECAST_NATIVE_TEMP: float(daily["tempMax"]),
+                    ATTR_FORECAST_NATIVE_TEMP_LOW: float(daily["tempMin"]),
                     ATTR_FORECAST_CONDITION: CONDITION_MAP.get(
                         daily["iconDay"], EXCEPTIONAL
                     ),
                     "text": daily["textNight"],
                     ATTR_FORECAST_WIND_BEARING: float(daily["wind360Day"]),
-                    ATTR_FORECAST_WIND_SPEED: float(daily["windSpeedDay"]),
-                    ATTR_FORECAST_PRECIPITATION: float(daily["precip"]),
+                    ATTR_FORECAST_NATIVE_WIND_SPEED: float(daily["windSpeedDay"]),
+                    ATTR_FORECAST_NATIVE_PRECIPITATION: float(daily["precip"]),
                     "humidity": float(daily["humidity"]),
                     ATTR_FORECAST_PRECIPITATION_PROBABILITY: int(
                         daily["humidity"]
@@ -294,14 +298,14 @@ class QWeather(WeatherEntity):
                 {
                     "time": hourly["fxTime"][11:16],
                     ATTR_CONDITION_CLOUDY: hourly["cloud"],
-                    ATTR_FORECAST_TEMP: float(hourly["temp"]),
+                    ATTR_FORECAST_NATIVE_TEMP: float(hourly["temp"]),
                     ATTR_FORECAST_CONDITION: CONDITION_MAP.get(
                         hourly["icon"], EXCEPTIONAL
                     ),
                     "text": hourly["text"],
                     ATTR_FORECAST_WIND_BEARING: float(hourly["wind360"]),
-                    ATTR_FORECAST_WIND_SPEED: float(hourly["windSpeed"]),
-                    ATTR_FORECAST_PRECIPITATION: float(hourly["precip"]),
+                    ATTR_FORECAST_NATIVE_WIND_SPEED: float(hourly["windSpeed"]),
+                    ATTR_FORECAST_NATIVE_PRECIPITATION: float(hourly["precip"]),
                     ATTR_WEATHER_HUMIDITY: float(hourly["humidity"]),
                     ATTR_FORECAST_PRECIPITATION_PROBABILITY: int(
                         hourly["pop"]
@@ -321,7 +325,7 @@ class QWeather(WeatherEntity):
                 {
                     "time": minutely_data['fxTime'][11:16],
                     "type": minutely_data["type"],
-                    ATTR_FORECAST_PRECIPITATION: float(minutely_data["precip"]),
+                    ATTR_FORECAST_NATIVE_PRECIPITATION: float(minutely_data["precip"]),
                 }
             )
 
