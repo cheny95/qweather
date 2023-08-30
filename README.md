@@ -145,6 +145,8 @@ weather_warning:
 ```
 #
 ## 版本记录：
+- v0.0.9 
+  - 适应HomeAssistant新的单位系统 via [@JonathanKang]([https://github.com/al-one/hass-xiaomi-miot](https://github.com/JonathanKang)) 
 
 - v0.0.8
   - 修复实时天气的取值还原为英文，但是在属性中增加了中文字段（condition_desc），因为官方仅支持少量天气图标和解释。（所有偶尔会有图标不对的情况）
