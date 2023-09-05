@@ -7,7 +7,7 @@
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
 - 然后重启Home Assistant服务。
 - 启动完成后，在`/config/configuration.yaml`添加以下内容
-- **注意：后续版本不支持普通用户，仅支持开发者用户**
+- **注意：后续版本不支持普通用户，仅支持开发者用户（提示：申请和风开发者需要上传身份证信息，也可考虑从互联网获取一份身份证信息，自行决定，请勿违法）**
 
 ```yaml
 weather:
