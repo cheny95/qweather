@@ -7,7 +7,7 @@
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
 - 然后重启Home Assistant服务。
 - 启动完成后，在`/config/configuration.yaml`添加以下内容
-- **注意：后续版本不支持普通用户，仅支持开发者用户（提示：申请和风开发者需要上传身份证信息，也可考虑从互联网获取一份身份证信息，自行决定，请勿违法）**
+- **注意：后续版本不支持普通用户，仅支持开发者用户（提示：申请和风开发者需要上传身份证信息，自行决定是否使用）**
 
 ```yaml
 weather:
@@ -16,6 +16,7 @@ weather:
     api_key: 123456
     location: 116.40,39.90 #注意，此处改为了经纬度
     default: 7
+    scan_interval: 600
 ```
 - 再次重启 Home Assistant
 - 依次点击配置 - 设备与服务 - 实体注册表 搜索你刚才填写配置文件里的名字即可
