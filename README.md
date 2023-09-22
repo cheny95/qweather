@@ -2,6 +2,8 @@
 
 ![yaofan](https://user-images.githubusercontent.com/6293952/196037499-17ef6aec-9fe4-4fc2-a4ac-811a12bfb380.jpg)
 
+### 由于该插件需要注册开发者，使用成本较高，miot-auto开发者开发了“船新版本”的天气插件，无需任何注册开发者，并且兼容彩云天气的卡片，请移步 https://github.com/hasscc/tianqi
+
 ## 使用方法：
 
 - 下载该集成放入homeassistant安装目录`/config/custom_conponents/`中
